@@ -15,18 +15,26 @@
 
 <!-- ===== LANDING ===== -->
 <div class="screen active" id="landing">
-  <div class="landing-bg"></div>
+  <div class="landing-bg">
+    <div class="landing-grid"></div>
+    <div class="landing-orb3"></div>
+    <div class="landing-particles" id="landingParticles"></div>
+  </div>
   <div class="landing-content">
     <div class="logo-mark">🏟</div>
     <div class="landing-title">Smart<span>Stadium</span></div>
     <div class="landing-sub">Your intelligent stadium companion. Navigate, order, and experience events like never before.</div>
-    <!-- NEW: Venue + Event info on landing -->
     <div class="landing-venue">📍 Narendra Modi Stadium, Ahmedabad &nbsp;·&nbsp; 🏏 IPL 2025</div>
+    <div class="landing-stats">
+      <span class="landing-stat-badge">🏟 132K Capacity</span>
+      <span class="landing-stat-badge">⚡ Live Tracking</span>
+      <span class="landing-stat-badge">🤖 AI Routing</span>
+    </div>
     <div class="landing-btns">
       <button class="btn-primary" aria-label="Scan Ticket" onclick="goTo('scan-screen')">🎫 Scan Ticket</button>
       <button class="btn-secondary" aria-label="Continue as Guest" onclick="loginAsGuest()">Continue as Guest</button>
     </div>
-    <button class="admin-link" style="background:none;border:none" aria-label="Admin Login" onclick="goTo('admin-login')">Admin Login →</button>
+    <button class="admin-link" aria-label="Admin Login" onclick="goTo('admin-login')">Admin Login →</button>
   </div>
 </div>
 
@@ -579,5 +587,31 @@
 </div>
 
 <script src="script_enhanced.js"></script>
+<script>
+// Spawn floating particles on landing page
+(function spawnParticles() {
+  const container = document.getElementById('landingParticles');
+  if (!container) return;
+  const colors = ['#7c3aed','#a855f7','#06b6d4','#ec4899','#10b981','#f59e0b'];
+  const sizes  = [3,4,5,6,4,3,5];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = sizes[i % sizes.length];
+    const duration = 6 + Math.random() * 10;
+    const delay    = Math.random() * 8;
+    const left     = Math.random() * 100;
+    p.style.cssText = [
+      `width:${sz}px`, `height:${sz}px`,
+      `background:${colors[i % colors.length]}`,
+      `left:${left}%`, `bottom:${Math.random()*20}%`,
+      `animation-duration:${duration.toFixed(1)}s`,
+      `animation-delay:${delay.toFixed(1)}s`,
+      `box-shadow:0 0 ${sz*2}px ${colors[i % colors.length]}`,
+    ].join(';');
+    container.appendChild(p);
+  }
+})();
+</script>
 </body>
 </html>
