@@ -34,9 +34,26 @@
       <span class="landing-stat-badge">⚡ Live Tracking</span>
       <span class="landing-stat-badge">🤖 AI Routing</span>
     </div>
-    <div class="landing-btns">
-      <button class="btn-primary" aria-label="Scan Ticket" onclick="goTo('scan-screen')">🎫 Scan Ticket</button>
-      <button class="btn-secondary" aria-label="Continue as Guest" onclick="loginAsGuest()">Continue as Guest</button>
+    <div class="landing-btns" style="align-items: center;">
+      <!-- Google Login Button Container -->
+      <div id="g_id_onload"
+           data-client_id="YOUR_GOOGLE_CLIENT_ID"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="handleGoogleLogin"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-shape="rectangular"
+           data-theme="filled_black"
+           data-text="signin_with"
+           data-size="large"
+           data-logo_alignment="left">
+      </div>
+
+      <button class="btn-primary" aria-label="Scan Ticket" onclick="goTo('scan-screen')" style="width: 100%; margin-top: 0.5rem;">🎫 Scan Ticket</button>
+      <button class="btn-secondary" aria-label="Continue as Guest" onclick="loginAsGuest()" style="width: 100%;">Continue as Guest</button>
     </div>
     <button class="admin-link" aria-label="Admin Login" onclick="goTo('admin-login')">Admin Login →</button>
   </div>

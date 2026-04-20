@@ -2175,3 +2175,158 @@ body {
   transition: all .2s var(--ease);
 }
 .gmap-close-btn:hover { background: rgba(255,255,255,.13); color: var(--text1); }
+
+/* ============================================================
+   GOOGLE OAUTH MODAL
+   ============================================================ */
+.oauth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4, 8, 22, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: oauthFadeIn .25s ease;
+}
+
+.oauth-overlay.active {
+  display: flex;
+}
+
+@keyframes oauthFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.oauth-card {
+  background: linear-gradient(160deg, rgba(15,24,48,.98) 0%, rgba(10,18,36,.98) 100%);
+  border: 1px solid rgba(124,58,237,.3);
+  border-radius: 24px;
+  padding: 2.25rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(124,58,237,.12), inset 0 1px 0 rgba(255,255,255,.06);
+  animation: oauthSlideUp .3s cubic-bezier(.22,.68,0,1.2);
+}
+
+@keyframes oauthSlideUp {
+  from { opacity: 0; transform: translateY(28px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+.oauth-logo-row {
+  margin-bottom: 1rem;
+}
+
+.oauth-stadium-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 8px 28px rgba(124,58,237,.45);
+  animation: oauthPulse 3s ease-in-out infinite;
+}
+
+@keyframes oauthPulse {
+  0%, 100% { box-shadow: 0 8px 28px rgba(124,58,237,.45); }
+  50%       { box-shadow: 0 8px 40px rgba(168,85,247,.65); }
+}
+
+.oauth-title {
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text1);
+  margin-bottom: .4rem;
+  text-align: center;
+}
+
+.oauth-sub {
+  font-size: .8rem;
+  color: var(--text3);
+  text-align: center;
+  line-height: 1.55;
+  max-width: 290px;
+  margin-bottom: 1.25rem;
+}
+
+.oauth-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,.07);
+  margin-bottom: 1.25rem;
+}
+
+/* Centre the GSI-rendered button */
+.g_id_signin {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: .2rem;
+}
+
+.oauth-or-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  width: 100%;
+  margin: 1rem 0 .75rem;
+  color: var(--text3);
+  font-size: .73rem;
+}
+
+.oauth-or-row::before,
+.oauth-or-row::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,.08);
+}
+
+.oauth-skip-btn {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  color: var(--text2);
+  font-size: .85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+  margin-bottom: 1rem;
+}
+
+.oauth-skip-btn:hover {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.22);
+  color: var(--text1);
+}
+
+.oauth-privacy {
+  font-size: .67rem;
+  color: var(--text3);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.oauth-privacy a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.oauth-privacy a:hover {
+  text-decoration: underline;
+}

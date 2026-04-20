@@ -152,7 +152,52 @@ function goTo(id) {
 }
 
 function loginAsGuest() {
+  // Show the Google OAuth modal
+  const overlay = $el('oauthOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.focus && overlay.focus();
+  }
+}
+
+/**
+ * Called by Google Identity Services after a successful sign-in.
+ * Decodes the JWT credential to extract name/email/picture.
+ * @param {Object} response - GSI credential response
+ */
+function handleGoogleSignIn(response) {
+  try {
+    // Decode the JWT payload (base64url, middle segment)
+    const payload = JSON.parse(atob(response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    const name    = sanitizeInput(payload.given_name || payload.name || 'User');
+    const email   = sanitizeInput(payload.email || '');
+    const picture = payload.picture || '';
+
+    // Close the modal
+    const overlay = $el('oauthOverlay');
+    if (overlay) overlay.classList.remove('active');
+
+    // Set display name
+    const userNameEl = $el('userName');
+    if (userNameEl) userNameEl.textContent = name;
+
+    // Optionally store for later use
+    window._guestUser = { name, email, picture, role: 'google' };
+
+    goTo('main-app');
+    showToast('success', `👋 Welcome, ${name}!`);
+  } catch (e) {
+    console.error('Google sign-in decode error:', e);
+    skipGoogleSignIn(); // graceful fallback
+  }
+}
+
+/** Skip Google sign-in and continue as anonymous guest. */
+function skipGoogleSignIn() {
+  const overlay = $el('oauthOverlay');
+  if (overlay) overlay.classList.remove('active');
   $el('userName').textContent = 'Guest';
+  window._guestUser = { name: 'Guest', role: 'guest' };
   goTo('main-app');
 }
 
@@ -1189,5 +1234,60 @@ function toggleMapView() {
     container.style.display = 'none';
     btn.textContent = '🗺 Real Map';
     btn.classList.remove('active');
+  }
+}
+
+/* =========================================================
+   GOOGLE LOGIN INTEGRATION
+   ========================================================= */
+
+/**
+ * Decodes the JWT token returned by Google
+ */
+function decodeJwtResponse(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
+/**
+ * Handles the Google Sign-In response
+ */
+function handleGoogleLogin(response) {
+  try {
+    const responsePayload = decodeJwtResponse(response.credential);
+    
+    // Store user info
+    currentUser = {
+      id: responsePayload.sub,
+      name: responsePayload.name,
+      email: responsePayload.email,
+      picture: responsePayload.picture,
+      role: 'user'
+    };
+
+    console.log("ID: " + responsePayload.sub);
+    console.log('Full Name: ' + responsePayload.name);
+    console.log('Given Name: ' + responsePayload.given_name);
+    console.log('Family Name: ' + responsePayload.family_name);
+    console.log("Image URL: " + responsePayload.picture);
+    console.log("Email: " + responsePayload.email);
+
+    // Show success toast
+    showToast('success', `Welcome back, ${responsePayload.given_name}!`);
+
+    // Transition to main app
+    goTo('main-app');
+    
+    // Update UI with user profile if needed
+    // (e.g. replacing 'Guest' with their name/picture in a profile menu)
+
+  } catch (error) {
+    console.error("Error decoding Google Login JWT:", error);
+    showToast('error', 'Login failed. Please try again.');
   }
 }
