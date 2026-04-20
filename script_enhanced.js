@@ -1087,3 +1087,107 @@ function startSimulationEngine() {
 
 // Ensure Twin Dots init runs
 initTwinDots();
+
+/* =========================================================
+   GOOGLE MAPS INTEGRATION
+   ========================================================= */
+
+let googleMap = null;
+let mapViewActive = false;
+
+/**
+ * Called by Google Maps API once loaded (callback=initGoogleMap)
+ * Centers on Narendra Modi Stadium, Ahmedabad
+ */
+function initGoogleMap() {
+  const stadiumCoords = { lat: 23.0941, lng: 72.5949 };
+
+  googleMap = new google.maps.Map(document.getElementById('google-map'), {
+    center: stadiumCoords,
+    zoom: 17,
+    mapTypeId: 'satellite',
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      position: google.maps.ControlPosition.TOP_RIGHT,
+      mapTypeIds: ['satellite', 'roadmap', 'hybrid'],
+    },
+    streetViewControl: false,
+    fullscreenControl: false,
+    zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+    styles: [{ featureType: 'all', elementType: 'labels.text.fill', stylers: [{ color: '#e0e0e0' }] }],
+  });
+
+  // Stadium marker with custom icon
+  const marker = new google.maps.Marker({
+    position: stadiumCoords,
+    map: googleMap,
+    title: 'Narendra Modi Stadium',
+    animation: google.maps.Animation.DROP,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 14,
+      fillColor: '#a855f7',
+      fillOpacity: 0.9,
+      strokeColor: '#fff',
+      strokeWeight: 2.5,
+    },
+  });
+
+  // Info window with event details
+  const infoWindow = new google.maps.InfoWindow({
+    content: `
+      <div style="font-family:'DM Sans',sans-serif;padding:6px;min-width:180px">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:2px">🏟 Narendra Modi Stadium</div>
+        <div style="font-size:.78rem;color:#555;margin-bottom:6px">Motera, Ahmedabad · 132,000 capacity</div>
+        <div style="background:#7c3aed;color:#fff;border-radius:6px;padding:4px 8px;font-size:.75rem;font-weight:600;display:inline-block">🏏 GT vs MI · IPL 2025</div>
+      </div>
+    `,
+  });
+
+  marker.addListener('click', () => infoWindow.open(googleMap, marker));
+  // Auto-open info window on load
+  infoWindow.open(googleMap, marker);
+
+  // Draw a circle showing the stadium boundary
+  new google.maps.Circle({
+    map: googleMap,
+    center: stadiumCoords,
+    radius: 280,
+    strokeColor: '#a855f7',
+    strokeOpacity: 0.6,
+    strokeWeight: 2,
+    fillColor: '#7c3aed',
+    fillOpacity: 0.08,
+  });
+}
+
+/**
+ * Toggle between SVG Digital Twin and Google Maps real-world view
+ */
+function toggleMapView() {
+  mapViewActive = !mapViewActive;
+  const container = $el('google-map-container');
+  const btn       = $el('mapToggleBtn');
+
+  if (mapViewActive) {
+    container.style.display = 'block';
+    btn.textContent = '🏟 Digital Twin';
+    btn.classList.add('active');
+    // Trigger resize so Google Maps renders correctly inside the container
+    if (googleMap) {
+      google.maps.event.trigger(googleMap, 'resize');
+      googleMap.setCenter({ lat: 23.0941, lng: 72.5949 });
+    } else {
+      showToast('warn', 'Maps still loading — try again in a moment');
+      mapViewActive = false;
+      container.style.display = 'none';
+      btn.textContent = '🗺 Real Map';
+      btn.classList.remove('active');
+    }
+  } else {
+    container.style.display = 'none';
+    btn.textContent = '🗺 Real Map';
+    btn.classList.remove('active');
+  }
+}

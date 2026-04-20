@@ -9,6 +9,10 @@
 <link rel="stylesheet" href="style_enhanced.css"/>
 <!-- QR Code Scanner Library -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Google Maps JavaScript API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initGoogleMap&v=weekly" defer></script>
 </head>
 <body>
 <div id="root">
@@ -253,13 +257,31 @@
         <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>High</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--accent2);width:10px;height:10px;border-radius:50%;border:2px solid #fff"></div>You</div>
       </div>
-      <!-- Scenario Selector Dropdown -->
-      <select class="scenario-select" id="scenarioSelect" aria-label="Simulation Scenario" onchange="applyScenario(this.value)">
-        <option value="normal">Scenario: Normal</option>
-        <option value="peak">Scenario: Peak Crowd</option>
-        <option value="end">Scenario: Match End Rush</option>
-        <option value="emergency">Scenario: Emergency</option>
-      </select>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <!-- Map view toggle -->
+        <button class="map-toggle-btn" id="mapToggleBtn" onclick="toggleMapView()" title="Toggle Map View">
+          🗺 Real Map
+        </button>
+        <!-- Scenario Selector Dropdown -->
+        <select class="scenario-select" id="scenarioSelect" aria-label="Simulation Scenario" onchange="applyScenario(this.value)">
+          <option value="normal">Scenario: Normal</option>
+          <option value="peak">Scenario: Peak Crowd</option>
+          <option value="end">Scenario: Match End Rush</option>
+          <option value="emergency">Scenario: Emergency</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Google Maps overlay (hidden by default) -->
+    <div id="google-map-container" style="display:none;position:absolute;inset:0;z-index:10;">
+      <div id="google-map" style="width:100%;height:100%;"></div>
+      <!-- Getting Here panel -->
+      <div class="gmap-panel">
+        <div class="gmap-panel-title">📍 Narendra Modi Stadium</div>
+        <div class="gmap-panel-sub">Motera, Ahmedabad, Gujarat 380005</div>
+        <a class="gmap-directions-btn" href="https://www.google.com/maps/dir/?api=1&destination=Narendra+Modi+Stadium,+Ahmedabad" target="_blank">🧭 Get Directions</a>
+        <button class="gmap-close-btn" onclick="toggleMapView()">← Digital Twin</button>
+      </div>
     </div>
 
     <!-- NEW: Event Countdown Banner (top-right of map) -->
@@ -579,6 +601,38 @@
         <g id="adminDots"></g>
       </svg>
     </div>
+  </div>
+</div>
+
+<!-- ===== GOOGLE SIGN-IN MODAL ===== -->
+<div class="oauth-overlay" id="oauthOverlay" role="dialog" aria-modal="true" aria-labelledby="oauthTitle">
+  <div class="oauth-card">
+    <div class="oauth-logo-row">
+      <div class="oauth-stadium-icon">🏟</div>
+    </div>
+    <div class="oauth-title" id="oauthTitle">Sign in to SmartStadium</div>
+    <div class="oauth-sub">Use your Google account for a personalised experience — saved routes, order history and group tracking.</div>
+    <div class="oauth-divider"></div>
+    <!-- Google One-Tap / Sign-In button rendered here -->
+    <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleGoogleSignIn"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="pill"
+         data-theme="filled_black"
+         data-text="continue_with"
+         data-size="large"
+         data-logo_alignment="left"
+         data-width="320">
+    </div>
+    <div class="oauth-or-row"><span>or</span></div>
+    <button class="oauth-skip-btn" id="oauthSkipBtn" onclick="skipGoogleSignIn()">Continue as Guest</button>
+    <div class="oauth-privacy">By signing in you agree to SmartStadium's <a href="#" onclick="return false">Terms</a> &amp; <a href="#" onclick="return false">Privacy Policy</a>.</div>
   </div>
 </div>
 
