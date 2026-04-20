@@ -4,8 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SmartStadium — Narendra Modi Stadium</title>
+<meta name="description" content="Intelligent stadium navigation and crowd management for Narendra Modi Stadium">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style_enhanced.css"/>
+<!-- QR Code Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
 <div id="root">
@@ -20,10 +23,10 @@
     <!-- NEW: Venue + Event info on landing -->
     <div class="landing-venue">📍 Narendra Modi Stadium, Ahmedabad &nbsp;·&nbsp; 🏏 IPL 2025</div>
     <div class="landing-btns">
-      <button class="btn-primary" onclick="goTo('scan-screen')">🎫 Scan Ticket</button>
-      <button class="btn-secondary" onclick="loginAsGuest()">Continue as Guest</button>
+      <button class="btn-primary" aria-label="Scan Ticket" onclick="goTo('scan-screen')">🎫 Scan Ticket</button>
+      <button class="btn-secondary" aria-label="Continue as Guest" onclick="loginAsGuest()">Continue as Guest</button>
     </div>
-    <div class="admin-link" onclick="goTo('admin-login')">Admin Login →</div>
+    <button class="admin-link" style="background:none;border:none" aria-label="Admin Login" onclick="goTo('admin-login')">Admin Login →</button>
   </div>
 </div>
 
@@ -33,29 +36,41 @@
     <button class="back-btn" onclick="goTo('landing')">← Back</button>
     <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600;margin-bottom:.25rem">Scan Your Ticket</div>
     <div style="color:var(--text2);font-size:.82rem;margin-bottom:1rem">Upload ticket image or use camera</div>
-    <div class="scan-area" id="scanArea" onclick="simulateScan()">
-      <div class="scan-line" id="scanLine"></div>
-      <div class="scan-icon">📷</div>
-      <div class="scan-text">Tap to scan ticket</div>
-      <div class="scan-text" style="font-size:.7rem;margin-top:.25rem;color:var(--text3)">or upload image</div>
+    <!-- Live Camera Scanner Area -->
+    <div id="qr-reader-container" style="display:none">
+      <div class="qr-reader-wrap"><div id="qr-reader"></div></div>
+      <button class="btn-secondary" style="width:100%" onclick="stopQRScanner()">Cancel Scanning</button>
+    </div>
+
+    <!-- Manual / Demo Mode Area -->
+    <div id="manual-scan-area">
+      <div class="scan-area" id="scanArea" onclick="startQRScanner()">
+        <div class="scan-line" id="scanLine"></div>
+        <div class="scan-icon">📷</div>
+        <div class="scan-text">Tap to start camera</div>
+      </div>
+      <div class="qr-manual-entry">
+        <button class="btn-outline-small" onclick="simulateScan('B7-102', 'Gate B')">Simulate Valid Scan</button>
+        <button class="btn-outline-small" onclick="simulateDuplicateScan()">Simulate Duplicate Scan</button>
+      </div>
       <div id="scanningOverlay" class="scanning-overlay hidden">
         <div class="scan-ring"></div>
-        <div style="font-size:.85rem;color:var(--text2)">Reading ticket...</div>
+        <div style="font-size:.85rem;color:var(--text2)">Processing...</div>
       </div>
     </div>
+
     <div id="scanSuccess" class="scan-success hidden">
-      <div style="color:var(--accent);font-size:.9rem;font-weight:600;margin-bottom:.5rem">✓ Ticket Verified!</div>
-      <div class="ticket-info">
-        <div class="ticket-row"><span class="ticket-label">Name</span><span class="ticket-val">Alex Johnson</span></div>
-        <div class="ticket-row"><span class="ticket-label">Seat</span><span class="ticket-val" id="ticketSeat">Block B · Row 7 · 102</span></div>
-        <div class="ticket-row"><span class="ticket-label">Event</span><span class="ticket-val">GT vs MI — IPL 2025</span></div>
-        <div class="ticket-row"><span class="ticket-label">Date</span><span class="ticket-val">Today, 7:30 PM IST</span></div>
+      <div class="ticket-approved">
+        <div class="ticket-approved-icon">✅</div>
+        <div class="ticket-approved-text">Entry Approved</div>
       </div>
-      <button class="btn-primary" style="width:100%" onclick="loginTicket()">Enter Stadium</button>
-    </div>
-    <div style="margin-top:1rem;text-align:center">
-      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="simulateScan()"/>
-      <button class="btn-outline-small" onclick="document.getElementById('fileInput').click()">Upload Image</button>
+      <div class="ticket-info" style="margin-top:1rem">
+        <div class="ticket-row"><span class="ticket-label">Name</span><span class="ticket-val" id="ticketName">Alex Johnson</span></div>
+        <div class="ticket-row"><span class="ticket-label">Seat</span><span class="ticket-val" id="ticketSeat">Block B · Row 7 · 102</span></div>
+        <div class="ticket-row"><span class="ticket-label">Gate</span><span class="ticket-val" id="ticketGate">B</span></div>
+        <div class="ticket-row"><span class="ticket-label">Event</span><span class="ticket-val" id="ticketEvent">GT vs MI</span></div>
+      </div>
+      <button class="btn-primary" aria-label="Enter Stadium" style="width:100%" onclick="loginTicket()">Enter Stadium</button>
     </div>
   </div>
 </div>
@@ -94,14 +109,13 @@
         <span id="userName">Guest</span>
       </div>
     </div>
-    <!-- TAB NAV — original tabs + Groups (new) -->
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('nav')">Navigate</button>
-      <button class="tab-btn" onclick="switchTab('heatmap')">Heatmap</button>
-      <button class="tab-btn" onclick="switchTab('food')">Food</button>
-      <button class="tab-btn" onclick="switchTab('waits')">Waits</button>
-      <!-- NEW: Groups tab -->
-      <button class="tab-btn" onclick="switchTab('groups')">Groups</button>
+    <!-- TAB NAV -->
+    <div class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('nav')">Navigate</button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('heatmap')">Heatmap</button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('food')">Food</button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('waits')">Waits</button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('groups')">Groups</button>
     </div>
 
     <!-- ===== NAVIGATE TAB (ORIGINAL + extended routes) ===== -->
@@ -138,7 +152,7 @@
         <div class="card-title mb-sm">Options</div>
         <div class="toggle-row">
           <span class="toggle-label">Avoid Crowded Areas</span>
-          <div class="toggle" id="avoidToggle" onclick="toggleAvoid()"><div class="toggle-thumb"></div></div>
+          <button class="toggle" role="switch" aria-checked="false" id="avoidToggle" onclick="toggleAvoid()"><div class="toggle-thumb"></div></button>
         </div>
         <div class="toggle-row">
           <span class="toggle-label">Live Location Tracking</span>
@@ -156,13 +170,13 @@
     </div>
 
     <!-- ===== HEATMAP TAB (ORIGINAL) ===== -->
-    <div class="tab-content" id="tab-heatmap">
+    <div class="tab-content" id="tab-heatmap" role="tabpanel">
       <div class="info-card">
         <div class="card-header">
           <div class="card-title">Crowd Density</div>
           <span id="surgeIndicator" class="badge-green">NORMAL</span>
         </div>
-        <div id="zoneList"></div>
+        <div id="zoneList" aria-live="polite"></div>
       </div>
       <button class="btn-primary" style="width:100%;margin-bottom:.75rem" id="surgeBtn" onclick="toggleSurge()">⚡ Simulate Crowd Surge</button>
     </div>
@@ -231,7 +245,13 @@
         <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>High</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--accent2);width:10px;height:10px;border-radius:50%;border:2px solid #fff"></div>You</div>
       </div>
-      <button class="surge-btn" id="mapSurgeBtn" onclick="toggleSurge()">⚡ Surge Sim</button>
+      <!-- Scenario Selector Dropdown -->
+      <select class="scenario-select" id="scenarioSelect" aria-label="Simulation Scenario" onchange="applyScenario(this.value)">
+        <option value="normal">Scenario: Normal</option>
+        <option value="peak">Scenario: Peak Crowd</option>
+        <option value="end">Scenario: Match End Rush</option>
+        <option value="emergency">Scenario: Emergency</option>
+      </select>
     </div>
 
     <!-- NEW: Event Countdown Banner (top-right of map) -->
@@ -241,6 +261,11 @@
       <div class="event-countdown-row">
         <span class="event-countdown-label" id="countdownLabel">Match starts in</span>
         <span class="event-countdown-val" id="countdownVal">--:--:--</span>
+      </div>
+      <div class="stress-indicator" id="stressIndicator" style="margin-top:4px">
+        <span class="stress-emoji" id="stressEmoji">😌</span>
+        <span class="stress-label">Status:</span>
+        <span class="stress-value relaxed" id="stressValue">Relaxed</span>
       </div>
       <div class="event-bottom-row">
         <span class="event-clock" id="liveClock">--:--:--</span>
@@ -354,7 +379,7 @@
     </div>
 
     <!-- NEW: EMERGENCY FLOAT BUTTON -->
-    <button class="emergency-float-btn" onclick="toggleEmergency()" title="Emergency Mode">
+    <button class="emergency-float-btn" aria-label="Activate Emergency Mode" onclick="toggleEmergency()" title="Emergency Mode">
       🚨<span class="em-label">SOS</span>
     </button>
 
@@ -550,7 +575,7 @@
 </div>
 
 <!-- TOAST CONTAINER -->
-<div class="toast-wrap" id="toastWrap"></div>
+<div class="toast-wrap" id="toastWrap" aria-live="polite" role="alert"></div>
 </div>
 
 <script src="script_enhanced.js"></script>
