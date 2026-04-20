@@ -2,311 +2,218 @@
 
 # 🏟️ SmartStadium
 
-### Intelligent Crowd Management & Navigation System
+**Intelligent Crowd Management & Navigation System**
 
-**Narendra Modi Stadium, Ahmedabad · IPL 2025 · Gujarat Titans vs Mumbai Indians**
+*Narendra Modi Stadium, Ahmedabad · IPL 2025 · Gujarat Titans vs Mumbai Indians*
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Cloud_Run-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://smartstadium-1064148922722.asia-south1.run.app)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/dtnotdt/smart-crowd-detection-app)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+&nbsp;
+[![GitHub](https://img.shields.io/badge/Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/dtnotdt/smart-crowd-detection-app)
 
-<br>
+---
 
-<img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
-<img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
-<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" />
-<img src="https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white" />
-<img src="https://img.shields.io/badge/Cloud_Run-4285F4?style=flat-square&logo=google-cloud&logoColor=white" />
+A real-time crowd management dashboard for smart stadiums.
+Built for the world's largest cricket stadium — **132,000 capacity**.
 
-<br><br>
+Digital twin visualization · Predictive analytics · Smart routing · Emergency response · Group tracking
 
-> A real-time, AI-simulated crowd management dashboard for smart stadiums. Built for the world's largest cricket stadium — Narendra Modi Stadium (132,000 capacity) — featuring digital twin visualization, predictive crowd analytics, smart routing, emergency response, and group tracking.
+---
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white)
+![Cloud Run](https://img.shields.io/badge/Cloud_Run-4285F4?style=flat-square&logo=google-cloud&logoColor=white)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 🎯 The Problem
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [System Architecture](#-system-architecture)
-- [Screens & Modules](#-screens--modules)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-- [Deployment](#-deployment)
-- [Project Structure](#-project-structure)
-- [Demo Credentials](#-demo-credentials)
-
----
-
-## 🌟 Overview
-
-SmartStadium is a comprehensive crowd intelligence platform designed for large-scale venues. It combines **real-time crowd visualization**, **AI-powered predictions**, and **smart navigation** into a single, responsive dashboard — purpose-built for the IPL match experience at Narendra Modi Stadium.
-
-The system simulates realistic crowd behavior across 10+ stadium zones, providing both **attendee-facing navigation** and **admin-facing analytics** through a unified interface.
-
-### 🎯 Problem Statement
-
-Managing 132,000+ spectators at the world's largest cricket stadium presents critical challenges:
+Managing **132,000+ spectators** at the world's largest cricket stadium presents critical challenges:
 
 | Challenge | SmartStadium Solution |
-|---|---|
-| Crowd bottlenecks at gates | 🗺️ Smart routing with 3 path options |
-| Long food/washroom queues | ⏱️ Live wait times + least-busy recommendations |
-| Emergency evacuation planning | 🚨 One-tap emergency mode with exit routing |
-| Group coordination in massive venues | 👥 QR-based group tracking with meetup suggestions |
-| Reactive crowd management | 📈 Predictive analytics with AI forecasting |
+|:--|:--|
+| Crowd bottlenecks at gates | 🗺️ Smart routing with 3 path options (Fastest / Least Crowded / Balanced) |
+| Long food & washroom queues | ⏱️ Live wait times with least-busy counter recommendations |
+| Emergency evacuation planning | 🚨 One-tap SOS mode with exit routing & incident tracking |
+| Group coordination in massive venues | 👥 QR-based group tracking with AI meetup suggestions |
+| Reactive (not proactive) management | 📈 Predictive analytics — "Gate B +20% in 10 mins" |
 
 ---
 
-## ✨ Key Features
-
-<table>
-<tr>
-<td width="50%">
+## ✨ Features
 
 ### 🔮 Digital Twin Overlay
-- Real-time heatmap visualization (green/yellow/red)
-- Animated crowd dots simulating movement across zones
-- Hover tooltips: crowd %, avg wait, state (Calm/Busy/High Risk)
-- Toggle on/off for performance
-
-</td>
-<td width="50%">
+- Real-time heatmap visualization across 10 stadium zones (green → yellow → red)
+- Animated crowd dots simulating movement via Brownian motion
+- Hover any zone for tooltip: **crowd %**, **avg wait time**, **state** (Calm / Busy / High Risk)
+- Toggle overlay on/off from the sidebar
 
 ### 🗺️ Smart Routing Engine
-- **3 route options**: Fastest · Least Crowded · Balanced
-- ETA (minutes) and distance display
-- Animated route highlighting on SVG map
-- Crowd-aware alternative suggestions
-
-</td>
-</tr>
-<tr>
-<td>
+- **3 route options** for every destination:
+  - 🚀 **Fastest** — shortest path (4 min, 280m)
+  - 🌿 **Least Crowded** — avoids high-density zones (7 min, 420m)
+  - ⚖️ **Balanced** — optimal trade-off (5 min, 330m)
+- Animated route polylines drawn on the SVG stadium map
+- ETA bar with one-tap alternate route switching
 
 ### 📈 Crowd Prediction Panel
-- AI-simulated forecasts per zone
-- "Gate B will increase by 20% in 10 mins"
-- Live trend mini-graph with rolling data
-- Auto-updating predictions every 10 seconds
-
-</td>
-<td>
+- AI-simulated forecasts per zone, updating every 10 seconds
+- Example: *"Gate A will increase by 20% in 10 mins"*
+- Live rolling trend mini-graph with 12-point data window
+- Positioned as a floating widget on the map view
 
 ### 💡 Smart Nudge System
-- Context-aware push notifications
-- "Gate D is less crowded — try entering there"
-- "Food Court 3 has no queue right now"
-- Triggered by real-time crowd imbalance detection
-
-</td>
-</tr>
-<tr>
-<td>
+- Context-aware toast notifications triggered by crowd imbalance
+- Examples:
+  - *"Gate C is significantly less crowded right now"*
+  - *"Food Court 3 has no queue — order now"*
+  - *"It's 34°C — water stations at Gate B and D"*
+- Automatic scheduling: rotates tips every 18s, imbalance check every 35s
 
 ### 🍽️ Queue Enhancement
-- Live wait times per counter (dynamic updates)
-- Food order status tracking: ⏳ Preparing / ✅ Ready
-- 🌟 Least-busy counter highlighted
-- Full food menu with cart & checkout
-
-</td>
-<td>
+- Live wait times per counter with dynamic jitter (updates every 8s)
+- Food order status tracking: ⏳ **Preparing** / ✅ **Ready**
+- 🌟 Least-busy counter auto-highlighted
+- Full food menu: Main Course, Beverages, Snacks — with cart & checkout
 
 ### 👥 Group Tracking (QR-Based)
-- Create group → generates mock QR code
-- Join group via QR scan
-- Each member shown as colored dot on map
-- 📍 "Find My Group" → routes to nearest member
-- 🤝 "Suggest Meetup" → lowest-density midpoint
-
-</td>
-</tr>
-<tr>
-<td>
+- **Create Group** → generates unique ID + mock QR code
+- **Join Group** via QR scan simulation
+- Each member rendered as a **colored dot** on the stadium map
+- 📍 **Find My Group** — routes to nearest member with ETA
+- 🤝 **Suggest Meetup** — calculates midpoint with lowest crowd density
 
 ### 🚨 Emergency Mode
-- Floating SOS button (always visible)
-- Highlights all 4 exits with pulsing markers
-- Shows safest path from current position
-- Active incident panel with details
-- Exit distances + crowd state per gate
-
-</td>
-<td>
+- Floating **SOS button** always visible on the map
+- On activation:
+  - All 4 exits highlighted with **pulsing green markers**
+  - **Safest path** calculated from current position (Gate D, 2 min, Clear)
+  - Active incident panel with 3 mock scenarios
+  - Per-exit distance and crowd state display
 
 ### 📊 Admin Analytics Dashboard
-- Total crowd count, most crowded zone, avg wait
-- Zone breakdown with capacity bars
-- Staff management (roster, dispatch, broadcast)
-- **What-If Simulation**: Close Gate C, restrict Gate A → see dynamic heatmap changes
-
-</td>
-</tr>
-</table>
+- Real-time stats: total crowd (87,400), active alerts, staff on duty, food orders
+- Zone breakdown with capacity bars and percentage labels
+- Staff management: roster, dispatch all, broadcast, open gates, send medical
+- **🔮 What-If Simulation**: toggle scenarios like "Close Gate C" or "Restrict Gate A to 50%" and watch the heatmap update dynamically
 
 ---
 
-## 🏗️ System Architecture
+## 🖥️ Screens
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                    SmartStadium App                       │
-├──────────────┬──────────────────┬────────────────────────┤
-│  Landing     │   Main App       │   Admin Panel          │
-│  • Scan QR   │   • Sidebar      │   • Dashboard          │
-│  • Guest     │   • SVG Map      │   • Alerts             │
-│  • Admin     │   • Overlays     │   • Staff Mgmt         │
-│              │   • Predictions  │   • What-If Sim        │
-│              │   • Emergency    │   • Analytics          │
-├──────────────┴──────────────────┴────────────────────────┤
-│                   Simulation Engine                       │
-│  • Zone density fluctuation (4s interval)                │
-│  • Digital twin dot animation (800ms)                    │
-│  • Wait time jitter (8s interval)                        │
-│  • Crowd prediction updates (10s interval)               │
-│  • Smart nudge scheduler (18s + 35s intervals)           │
-│  • Live clock + match countdown (1s)                     │
-├──────────────────────────────────────────────────────────┤
-│                   Deployment Layer                        │
-│  Docker (nginx:alpine) → Google Cloud Run (asia-south1)  │
-└──────────────────────────────────────────────────────────┘
-```
+### Landing
+Branded entry with IPL 2025 theming, ticket scan animation, guest login, and admin portal.
 
-### Data Flow
+### Main App — Attendee View
+| Tab | Contents |
+|:--|:--|
+| **Navigate** | Seat finder, 3 smart route cards, avoid-crowds toggle, digital twin toggle |
+| **Heatmap** | Zone density bars for all 10 zones, crowd surge simulation |
+| **Food** | Full stadium menu with prices, availability, cart system |
+| **Waits** | Wait time grid (9 locations) + food counter order tracking |
+| **Groups** | Create/join group, QR display, member list, find & meetup |
 
-```mermaid
-graph LR
-    A[Zone Data<br>10 zones] --> B[Simulation Engine]
-    B --> C[Heatmap Layer]
-    B --> D[Crowd Dots]
-    B --> E[Wait Times]
-    B --> F[Predictions]
-    C --> G[SVG Stadium Map]
-    D --> G
-    F --> H[Nudge System]
-    H --> I[Toast Notifications]
-    E --> J[Queue Panel]
-    G --> K[Route Overlay]
-```
+**Map overlays:** heatmap ellipses · crowd dots · route polylines · seat marker · user dot · exit highlights · group member dots
+
+### Admin Panel
+| Tab | Contents |
+|:--|:--|
+| **Dashboard** | Crowd stats, zone bars, extended analytics, surge trigger, staff dispatch |
+| **Alerts** | Active alerts with severity dots, timestamped history log |
+| **Staff Mgmt** | 6-person roster, broadcast / open gate / send medical actions |
+| **Analytics** | What-If simulation (4 scenarios), crowd trend chart, gate volume chart |
 
 ---
 
-## 🖥️ Screens & Modules
+## 🏗️ Architecture
 
-### 1. Landing Screen
-- Stadium branding with IPL 2025 theming
-- Ticket scan (simulated with animation)
-- Guest login option
-- Admin access portal
+```
+SmartStadium App
+├── Landing Screen ─── Scan Ticket / Guest / Admin Login
+├── Main App
+│   ├── Sidebar (5 tabs: Navigate, Heatmap, Food, Waits, Groups)
+│   ├── SVG Stadium Map (800×600 viewBox)
+│   │   ├── Heatmap Layer (10 zone ellipses)
+│   │   ├── Crowd Dots Layer (static)
+│   │   ├── Digital Twin Layer (animated Brownian dots)
+│   │   ├── Route Layer (polylines with arrows)
+│   │   ├── Group Dots Layer (colored member markers)
+│   │   └── Exit Highlights Layer (emergency pulsing)
+│   ├── Event Banner (IPL countdown + live clock + temp)
+│   ├── Crowd Prediction Panel (floating widget)
+│   └── Emergency Overlay (full-screen SOS mode)
+├── Admin Panel
+│   ├── Left: Dashboard / Alerts / Staff / Analytics tabs
+│   └── Right: Admin SVG Map with heatmap + crowd dots
+└── Toast System (notifications + smart nudges)
+```
 
-### 2. Main App (Attendee View)
+**Simulation intervals:**
 
-| Module | Tab | Description |
-|---|---|---|
-| **Navigate** | `nav` | Seat finder, 3 smart routes, avoid-crowds toggle, digital twin toggle |
-| **Heatmap** | `heatmap` | All zone densities, surge simulation button |
-| **Food** | `food` | Full menu (Main Course, Beverages, Snacks), cart system |
-| **Waits** | `waits` | Real-time wait grid + food counter status with order tracking |
-| **Groups** | `groups` | Create/join group, QR code, member map, meetup suggestion |
-
-**Map Overlays:**
-- 🟢🟡🔴 Heatmap ellipses per zone
-- 🔵 Animated crowd dots (digital twin)
-- ➡️ Route polylines with directional arrows
-- 📍 Seat marker + user location dot
-- 🚨 Emergency exit highlights (pulsing)
-- 👥 Group member colored dots
-
-### 3. Admin Panel
-
-| Tab | Features |
-|---|---|
-| **Dashboard** | Crowd stats, zone breakdown, extended analytics, surge trigger, staff dispatch |
-| **Alerts** | Active alerts with severity, alert history log |
-| **Staff Mgmt** | Roster view, broadcast, open gate, send medical |
-| **Analytics** | What-If simulation, crowd trend chart, gate volume chart |
+| Engine | Interval | Behavior |
+|:--|:--|:--|
+| Zone density | 4s | ±2% random walk (bounds: 15–98%) |
+| Digital twin dots | 800ms | Brownian motion within zone ellipses |
+| Wait times | 8s | ±2 min jitter (bounds: 1–30 min) |
+| Crowd predictions | 10s | ±4% forecast variation |
+| Smart nudges | 18s | Rotates 6 contextual tips |
+| Imbalance nudges | 35s | Fires when >80% and <45% zones coexist |
+| Clock + countdown | 1s | Live IST time + countdown to 7:30 PM |
 
 ---
 
 ## 🛠️ Tech Stack
 
 | Layer | Technology | Purpose |
-|---|---|---|
-| **Structure** | HTML5 | Semantic markup, SVG stadium map |
-| **Styling** | CSS3 | Custom properties, animations, glassmorphism |
-| **Logic** | Vanilla JavaScript | Simulation engine, DOM rendering, state management |
-| **Fonts** | Google Fonts | Space Grotesk (headings) + DM Sans (body) |
-| **Graphics** | SVG | Stadium map, routes, heatmap, crowd dots |
-| **Container** | Docker + nginx:alpine | Lightweight static file serving |
-| **Hosting** | Google Cloud Run | Serverless, auto-scaling, Mumbai region |
+|:--|:--|:--|
+| Structure | HTML5 | Semantic markup, SVG stadium map |
+| Styling | CSS3 | Custom properties, keyframe animations, glassmorphism |
+| Logic | Vanilla JS | Simulation engine, DOM rendering, state management |
+| Fonts | Google Fonts | Space Grotesk (headings) + DM Sans (body) |
+| Graphics | Inline SVG | Stadium map, routes, heatmap, crowd dots |
+| Container | Docker + nginx:alpine | Static file serving on port 8080 |
+| Hosting | Google Cloud Run | Serverless, auto-scaling, Mumbai region |
 
-### Why No Framework?
-
-This project intentionally uses **zero dependencies** — no React, no build tools, no npm. The entire app is 3 files (~95KB total) that run instantly in any browser. This makes it:
-- ⚡ **Instant load** — no bundle compilation
-- 🔒 **Zero supply chain risk** — no node_modules
-- 📦 **Tiny Docker image** — ~25MB with nginx:alpine
-- 🌍 **Works offline** — just open the HTML file
+**Why zero dependencies?** The entire app is **3 files (~95KB)**. No React, no build tools, no npm. Instant load, zero supply chain risk, ~25MB Docker image, works offline by opening the HTML file directly.
 
 ---
 
 ## 🚀 Getting Started
 
-### Run Locally (No Setup Required)
+**Run locally (no setup required):**
 
 ```bash
-# Clone the repository
 git clone https://github.com/dtnotdt/smart-crowd-detection-app.git
 cd smart-crowd-detection-app
 
-# Option 1: Just open in browser
+# Just open in browser
 open SmartStadium_Enhanced.html
 
-# Option 2: Use a local server (for proper MIME types)
+# Or use a local server
 python3 -m http.server 8080
-# Then visit http://localhost:8080
+# → http://localhost:8080
 ```
 
-### Run with Docker
+**Run with Docker:**
 
 ```bash
-# Build the container
 docker build -t smartstadium .
-
-# Run on port 8080
 docker run -p 8080:8080 smartstadium
-
-# Visit http://localhost:8080
+# → http://localhost:8080
 ```
 
----
-
-## ☁️ Deployment
-
-### Google Cloud Run
+**Deploy to Cloud Run:**
 
 ```bash
-# Authenticate
 gcloud auth login
-
-# Set project
 gcloud config set project YOUR_PROJECT_ID
-
-# Enable APIs
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
-
-# Deploy (builds + deploys in one command)
-gcloud run deploy smartstadium \
-  --source . \
-  --region asia-south1 \
-  --allow-unauthenticated
+gcloud run deploy smartstadium --source . --region asia-south1 --allow-unauthenticated
 ```
-
-**Current deployment:** [`asia-south1` (Mumbai)](https://smartstadium-1064148922722.asia-south1.run.app) — chosen for lowest latency to Ahmedabad.
 
 ---
 
@@ -314,60 +221,46 @@ gcloud run deploy smartstadium \
 
 ```
 smart-crowd-detection-app/
-├── SmartStadium_Enhanced.html   # 559 lines — HTML structure & SVG map
-├── style_enhanced.css           # 315 lines — Complete design system
-├── script_enhanced.js           # 918 lines — Simulation engine & logic
+├── SmartStadium_Enhanced.html   # HTML structure & SVG map (559 lines)
+├── style_enhanced.css           # Complete design system (315 lines)
+├── script_enhanced.js           # Simulation engine & logic (918 lines)
 ├── Dockerfile                   # nginx:alpine container
 ├── nginx.conf                   # Server config (port 8080, gzip, caching)
 ├── .dockerignore                # Docker build exclusions
 ├── .gitignore                   # Git exclusions
-└── README.md                    # This file
+└── README.md                    # Documentation
 ```
 
 ---
 
 ## 🔑 Demo Credentials
 
-| Role | Action |
-|---|---|
-| **Guest** | Click "Continue as Guest" on landing |
-| **Ticket Holder** | Click "Scan Ticket" → tap scan area → "Enter Stadium" |
+| Role | How to Access |
+|:--|:--|
+| **Guest** | Click *"Continue as Guest"* on landing |
+| **Ticket Holder** | Click *"Scan Ticket"* → tap scan area → *"Enter Stadium"* |
 | **Admin** | Username: `admin` · Password: `admin123` |
-
----
-
-## 📊 Simulation Parameters
-
-| Parameter | Interval | Description |
-|---|---|---|
-| Zone density | 4 sec | ±2% random walk per zone (15–98% bounds) |
-| Digital twin dots | 800 ms | Brownian motion within zone ellipses |
-| Wait times | 8 sec | ±2 min jitter per queue (1–30 min bounds) |
-| Crowd predictions | 10 sec | ±4% forecast variation |
-| Smart nudges | 18 sec | Rotates through 6 contextual tips |
-| Imbalance nudges | 35 sec | Triggers when high (>80%) and low (<45%) zones coexist |
-| Clock & countdown | 1 sec | Live IST clock + countdown to 7:30 PM match time |
 
 ---
 
 ## 🏟️ Venue Context
 
 | Detail | Value |
-|---|---|
-| **Stadium** | Narendra Modi Stadium (Motera) |
-| **Location** | Ahmedabad, Gujarat, India |
-| **Capacity** | ~132,000 (largest cricket stadium) |
-| **Event** | IPL 2025 — Gujarat Titans vs Mumbai Indians |
-| **Zones Modeled** | 10 (4 gates + 5 sections + food court) |
-| **Simulated Crowd** | ~87,400 attendees (66% capacity) |
+|:--|:--|
+| Stadium | Narendra Modi Stadium (Motera) |
+| Location | Ahmedabad, Gujarat, India |
+| Capacity | ~132,000 (world's largest cricket stadium) |
+| Event | IPL 2025 — Gujarat Titans vs Mumbai Indians |
+| Zones Modeled | 10 (4 gates + 5 sections + food court) |
+| Simulated Crowd | ~87,400 attendees (66% capacity) |
 
 ---
 
 <div align="center">
 
-### Built with ❤️ for smarter stadiums
+**Built with ❤️ for smarter stadiums**
 
-**[Live Demo](https://smartstadium-1064148922722.asia-south1.run.app)** · **[GitHub](https://github.com/dtnotdt/smart-crowd-detection-app)**
+[Live Demo](https://smartstadium-1064148922722.asia-south1.run.app) · [Source Code](https://github.com/dtnotdt/smart-crowd-detection-app)
 
 </div>
 ]]>
