@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SmartStadium — Narendra Modi Stadium</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style_enhanced.css"/>
+</head>
+<body>
+<div id="root">
+
+<!-- ===== LANDING ===== -->
+<div class="screen active" id="landing">
+  <div class="landing-bg"></div>
+  <div class="landing-content">
+    <div class="logo-mark">🏟</div>
+    <div class="landing-title">Smart<span>Stadium</span></div>
+    <div class="landing-sub">Your intelligent stadium companion. Navigate, order, and experience events like never before.</div>
+    <!-- NEW: Venue + Event info on landing -->
+    <div class="landing-venue">📍 Narendra Modi Stadium, Ahmedabad &nbsp;·&nbsp; 🏏 IPL 2025</div>
+    <div class="landing-btns">
+      <button class="btn-primary" onclick="goTo('scan-screen')">🎫 Scan Ticket</button>
+      <button class="btn-secondary" onclick="loginAsGuest()">Continue as Guest</button>
+    </div>
+    <div class="admin-link" onclick="goTo('admin-login')">Admin Login →</div>
+  </div>
+</div>
+
+<!-- ===== SCAN TICKET ===== -->
+<div class="screen" id="scan-screen" style="align-items:center;justify-content:center;background:var(--bg)">
+  <div class="scan-card">
+    <button class="back-btn" onclick="goTo('landing')">← Back</button>
+    <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600;margin-bottom:.25rem">Scan Your Ticket</div>
+    <div style="color:var(--text2);font-size:.82rem;margin-bottom:1rem">Upload ticket image or use camera</div>
+    <div class="scan-area" id="scanArea" onclick="simulateScan()">
+      <div class="scan-line" id="scanLine"></div>
+      <div class="scan-icon">📷</div>
+      <div class="scan-text">Tap to scan ticket</div>
+      <div class="scan-text" style="font-size:.7rem;margin-top:.25rem;color:var(--text3)">or upload image</div>
+      <div id="scanningOverlay" class="scanning-overlay hidden">
+        <div class="scan-ring"></div>
+        <div style="font-size:.85rem;color:var(--text2)">Reading ticket...</div>
+      </div>
+    </div>
+    <div id="scanSuccess" class="scan-success hidden">
+      <div style="color:var(--accent);font-size:.9rem;font-weight:600;margin-bottom:.5rem">✓ Ticket Verified!</div>
+      <div class="ticket-info">
+        <div class="ticket-row"><span class="ticket-label">Name</span><span class="ticket-val">Alex Johnson</span></div>
+        <div class="ticket-row"><span class="ticket-label">Seat</span><span class="ticket-val" id="ticketSeat">Block B · Row 7 · 102</span></div>
+        <div class="ticket-row"><span class="ticket-label">Event</span><span class="ticket-val">GT vs MI — IPL 2025</span></div>
+        <div class="ticket-row"><span class="ticket-label">Date</span><span class="ticket-val">Today, 7:30 PM IST</span></div>
+      </div>
+      <button class="btn-primary" style="width:100%" onclick="loginTicket()">Enter Stadium</button>
+    </div>
+    <div style="margin-top:1rem;text-align:center">
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="simulateScan()"/>
+      <button class="btn-outline-small" onclick="document.getElementById('fileInput').click()">Upload Image</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN LOGIN ===== -->
+<div class="screen" id="admin-login" style="align-items:center;justify-content:center;background:var(--bg)">
+  <div class="login-card">
+    <button class="back-btn" onclick="goTo('landing')">← Back</button>
+    <div class="login-title">Admin Access</div>
+    <div class="login-sub">SmartStadium Control Center</div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" id="adminUser" type="text" placeholder="admin"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="adminPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+    </div>
+    <div class="login-err" id="loginErr">Invalid credentials. Try admin / admin123</div>
+    <button class="btn-primary" style="width:100%;margin-top:.5rem" onclick="doAdminLogin()">Login to Dashboard</button>
+    <div style="margin-top:.75rem;font-size:.72rem;color:var(--text3);text-align:center">Hint: admin / admin123</div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="screen" id="main-app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-dot">S</div>
+        SmartStadium
+      </div>
+      <div class="user-chip">
+        <div class="user-dot"></div>
+        <span id="userName">Guest</span>
+      </div>
+    </div>
+    <!-- TAB NAV — original tabs + Groups (new) -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('nav')">Navigate</button>
+      <button class="tab-btn" onclick="switchTab('heatmap')">Heatmap</button>
+      <button class="tab-btn" onclick="switchTab('food')">Food</button>
+      <button class="tab-btn" onclick="switchTab('waits')">Waits</button>
+      <!-- NEW: Groups tab -->
+      <button class="tab-btn" onclick="switchTab('groups')">Groups</button>
+    </div>
+
+    <!-- ===== NAVIGATE TAB (ORIGINAL + extended routes) ===== -->
+    <div class="tab-content active" id="tab-nav">
+      <div class="search-row">
+        <input class="search-input" id="seatInput" placeholder="Enter seat (e.g. 102)" value="102"/>
+        <button class="search-btn" onclick="findRoute()">Find →</button>
+      </div>
+      <!-- ORIGINAL route pills kept, now also power the extended route cards below -->
+      <div class="alt-routes mb-sm">
+        <div class="route-pill active" id="rp0" onclick="selectRoute(0)">Via Gate B</div>
+        <div class="route-pill" id="rp1" onclick="selectRoute(1)">Via Gate C</div>
+        <div class="route-pill" id="rp2" onclick="selectRoute(2)">Via Gate D</div>
+      </div>
+      <div class="info-card" id="routeBox">
+        <div class="card-header">
+          <div class="card-title">Route Info</div>
+          <span class="badge-blue" id="routeType">PRIMARY</span>
+        </div>
+        <div class="route-box">
+          <div class="route-eta">
+            <div class="route-time" id="etaTime">4 min</div>
+            <div class="route-dist" id="etaDist">280 m · Shortest</div>
+          </div>
+          <div id="routeSteps"></div>
+        </div>
+      </div>
+      <!-- NEW: Extended Smart Route Options -->
+      <div class="info-card">
+        <div class="card-title mb-sm">🗺 Smart Route Options</div>
+        <div id="smartRouteCards"></div>
+      </div>
+      <div class="info-card">
+        <div class="card-title mb-sm">Options</div>
+        <div class="toggle-row">
+          <span class="toggle-label">Avoid Crowded Areas</span>
+          <div class="toggle" id="avoidToggle" onclick="toggleAvoid()"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Live Location Tracking</span>
+          <div class="toggle on" id="liveLocToggle" onclick="toggleLiveLoc()"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Show Crowd Dots</span>
+          <div class="toggle on" id="dotsToggle" onclick="toggleDots()"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Digital Twin Overlay</span>
+          <div class="toggle on" id="twinToggle" onclick="toggleTwin()"><div class="toggle-thumb"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HEATMAP TAB (ORIGINAL) ===== -->
+    <div class="tab-content" id="tab-heatmap">
+      <div class="info-card">
+        <div class="card-header">
+          <div class="card-title">Crowd Density</div>
+          <span id="surgeIndicator" class="badge-green">NORMAL</span>
+        </div>
+        <div id="zoneList"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-bottom:.75rem" id="surgeBtn" onclick="toggleSurge()">⚡ Simulate Crowd Surge</button>
+    </div>
+
+    <!-- ===== FOOD TAB (ORIGINAL) ===== -->
+    <div class="tab-content" id="tab-food">
+      <div id="foodView"></div>
+    </div>
+
+    <!-- ===== WAITS TAB (ORIGINAL + Queue Enhancement) ===== -->
+    <div class="tab-content" id="tab-waits">
+      <div class="info-card">
+        <div class="card-header">
+          <div class="card-title">Real-Time Waits</div>
+          <span style="font-size:.7rem;color:var(--text3)" id="waitUpdated">Just now</span>
+        </div>
+        <div class="wait-grid" id="waitGrid"></div>
+      </div>
+      <!-- NEW: Enhanced Queue with live wait + food orders -->
+      <div class="info-card" style="margin-top:.75rem">
+        <div class="card-title mb-sm">🍽 Food Counter Status</div>
+        <div id="queueEnhanced"></div>
+      </div>
+      <div class="info-card" style="margin-top:.75rem">
+        <div class="card-title mb-sm" style="margin-bottom:.5rem">Best Time to Go</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.6" id="bestTimeTip">
+          Washroom B is least busy right now. Food Court wait will drop in ~8 min.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NEW: GROUPS TAB ===== -->
+    <div class="tab-content" id="tab-groups">
+      <div class="info-card">
+        <div class="card-title mb-sm">👥 Group Tracking</div>
+        <div id="groupStatus"></div>
+        <div class="group-create-row" style="margin-top:.5rem">
+          <button class="search-btn" style="flex:1" onclick="createGroup()">+ Create Group</button>
+          <button class="btn-outline-small" onclick="joinGroupPrompt()">Join via QR</button>
+        </div>
+      </div>
+      <div class="info-card" id="groupQRCard" style="display:none">
+        <div class="card-title mb-sm" style="text-align:center">Your Group QR Code</div>
+        <div id="groupQRDisplay"></div>
+        <div style="text-align:center;font-size:.7rem;color:var(--text3);margin-top:.4rem" id="groupIdLabel"></div>
+      </div>
+      <div class="info-card" id="groupMembersCard" style="display:none">
+        <div class="card-header">
+          <div class="card-title">Members</div>
+          <span class="badge-blue" id="memberCount">0</span>
+        </div>
+        <div id="groupMembersList"></div>
+        <button class="find-group-btn" onclick="findMyGroup()">📍 Find My Group</button>
+        <button class="meetup-btn" onclick="suggestMeetup()">🤝 Suggest Meetup Point</button>
+        <div class="meetup-result" id="meetupResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAP AREA ===== -->
+  <div class="map-area">
+    <div class="map-top-bar">
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Low</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Medium</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>High</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2);width:10px;height:10px;border-radius:50%;border:2px solid #fff"></div>You</div>
+      </div>
+      <button class="surge-btn" id="mapSurgeBtn" onclick="toggleSurge()">⚡ Surge Sim</button>
+    </div>
+
+    <!-- NEW: Event Countdown Banner (top-right of map) -->
+    <div class="event-banner" id="eventBanner">
+      <div class="event-ipl-badge">IPL 2025</div>
+      <div class="event-teams"><span class="gt">Gujarat Titans</span> <span style="color:var(--text3);font-weight:400">vs</span> <span class="mi">Mumbai Indians</span></div>
+      <div class="event-countdown-row">
+        <span class="event-countdown-label" id="countdownLabel">Match starts in</span>
+        <span class="event-countdown-val" id="countdownVal">--:--:--</span>
+      </div>
+      <div class="event-bottom-row">
+        <span class="event-clock" id="liveClock">--:--:--</span>
+        <span class="event-temp" id="liveTemp">34°C</span>
+      </div>
+    </div>
+
+    <svg id="stadium-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="fieldGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1a4a2e"/>
+          <stop offset="100%" stop-color="#0d2e1a"/>
+        </radialGradient>
+        <radialGradient id="standGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1a2840"/>
+          <stop offset="100%" stop-color="#0d1a28"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#0099ff" opacity=".8"/>
+        </marker>
+        <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#00d4aa" opacity=".6"/>
+        </marker>
+      </defs>
+      <!-- OUTER STADIUM -->
+      <ellipse cx="400" cy="300" rx="350" ry="260" fill="#0d1520" stroke="#1e3a5f" stroke-width="2"/>
+      <!-- STANDS -->
+      <ellipse cx="400" cy="300" rx="310" ry="225" fill="url(#standGrad)" stroke="#1e3a5f" stroke-width="1"/>
+      <!-- INNER CONCOURSE -->
+      <ellipse cx="400" cy="300" rx="245" ry="175" fill="#0f1d2e" stroke="#1e3a5f" stroke-width="1"/>
+      <!-- FIELD -->
+      <ellipse cx="400" cy="300" rx="190" ry="135" fill="url(#fieldGrad)"/>
+      <!-- FIELD LINES -->
+      <ellipse cx="400" cy="300" rx="170" ry="120" fill="none" stroke="#1e5c30" stroke-width="1" opacity=".6"/>
+      <line x1="400" y1="165" x2="400" y2="435" stroke="#1e5c30" stroke-width="1" opacity=".6"/>
+      <ellipse cx="400" cy="300" rx="50" ry="40" fill="none" stroke="#1e5c30" stroke-width="1" opacity=".6"/>
+      <!-- GATE LABELS -->
+      <g id="gateLabels">
+        <rect x="50" y="270" width="70" height="28" rx="6" fill="#1a2840" stroke="#2a4a6f" stroke-width="1"/>
+        <text x="85" y="289" text-anchor="middle" fill="#8ba4c4" font-size="10" font-family="Space Grotesk" font-weight="600">Gate A</text>
+        <rect x="360" y="50" width="80" height="28" rx="6" fill="#1a2840" stroke="#2a4a6f" stroke-width="1"/>
+        <text x="400" y="69" text-anchor="middle" fill="#8ba4c4" font-size="10" font-family="Space Grotesk" font-weight="600">Gate B</text>
+        <rect x="670" y="270" width="70" height="28" rx="6" fill="#1a2840" stroke="#2a4a6f" stroke-width="1"/>
+        <text x="705" y="289" text-anchor="middle" fill="#8ba4c4" font-size="10" font-family="Space Grotesk" font-weight="600">Gate C</text>
+        <rect x="360" y="530" width="80" height="28" rx="6" fill="#1a2840" stroke="#2a4a6f" stroke-width="1"/>
+        <text x="400" y="549" text-anchor="middle" fill="#8ba4c4" font-size="10" font-family="Space Grotesk" font-weight="600">Gate D</text>
+        <!-- Sections -->
+        <text x="220" y="230" text-anchor="middle" fill="#4a6580" font-size="9" font-family="DM Sans">Sec 101</text>
+        <text x="400" y="200" text-anchor="middle" fill="#4a6580" font-size="9" font-family="DM Sans">Sec 102</text>
+        <text x="580" y="230" text-anchor="middle" fill="#4a6580" font-size="9" font-family="DM Sans">Sec 103</text>
+        <text x="220" y="380" text-anchor="middle" fill="#4a6580" font-size="9" font-family="DM Sans">Sec 104</text>
+        <text x="580" y="380" text-anchor="middle" fill="#4a6580" font-size="9" font-family="DM Sans">Sec 105</text>
+        <!-- Food Court / Wash Labels -->
+        <text x="290" y="310" text-anchor="middle" fill="#4a6580" font-size="8" font-family="DM Sans">Food Court</text>
+        <text x="510" y="310" text-anchor="middle" fill="#4a6580" font-size="8" font-family="DM Sans">Snack Bar</text>
+        <text x="290" y="350" text-anchor="middle" fill="#4a6580" font-size="8" font-family="DM Sans">WC-A</text>
+        <text x="510" y="350" text-anchor="middle" fill="#4a6580" font-size="8" font-family="DM Sans">WC-B</text>
+      </g>
+      <!-- NEW: HEATMAP LAYER (behind everything else) -->
+      <g id="heatmapLayer" opacity="0.55"></g>
+      <!-- CROWD DOTS LAYER -->
+      <g id="crowdDots"></g>
+      <!-- NEW: DIGITAL TWIN MOVING DOTS -->
+      <g id="twinDots"></g>
+      <!-- NEW: GROUP MEMBER DOTS -->
+      <g id="groupDots"></g>
+      <!-- ROUTE LAYER -->
+      <g id="routeLayer"></g>
+      <!-- NEW: EMERGENCY EXIT HIGHLIGHTS -->
+      <g id="exitHighlights" opacity="0"></g>
+      <!-- SEAT MARKER -->
+      <g id="seatMarker" style="display:none">
+        <circle cx="400" cy="200" r="8" fill="var(--accent)" opacity=".3"/>
+        <circle cx="400" cy="200" r="5" fill="var(--accent)"/>
+        <circle cx="400" cy="200" r="3" fill="#fff"/>
+        <text x="414" y="197" fill="var(--accent)" font-size="9" font-family="Space Grotesk" font-weight="600" id="seatLabel">Seat 102</text>
+      </g>
+      <!-- USER DOT -->
+      <g id="userDot">
+        <circle id="userPulse" cx="400" cy="490" r="14" fill="rgba(0,153,255,0.15)"/>
+        <circle id="userCore" cx="400" cy="490" r="7" fill="#0099ff" stroke="#fff" stroke-width="2"/>
+        <circle id="userInner" cx="400" cy="490" r="3" fill="#fff"/>
+      </g>
+    </svg>
+
+    <!-- ORIGINAL ETA BAR -->
+    <div class="eta-bar" id="etaBar" style="display:none">
+      <div>
+        <div class="eta-time" id="etaBarTime">4 min</div>
+        <div style="font-size:.68rem;color:var(--text3)">ETA to seat</div>
+      </div>
+      <div class="eta-sep"></div>
+      <div class="eta-info" id="etaBarInfo">Via Gate B · 280 m</div>
+      <button class="eta-alt" onclick="selectRoute((currentRoute+1)%3)">Alt route</button>
+    </div>
+
+    <!-- NEW: CROWD PREDICTION PANEL (bottom-left of map) -->
+    <div class="crowd-pred-panel" id="predPanel">
+      <div class="crowd-pred-title">
+        📈 Crowd Forecast
+        <span class="pred-badge">AI</span>
+      </div>
+      <div id="predItems"></div>
+      <div class="mini-graph">
+        <svg class="mini-chart-svg" id="miniChart" viewBox="0 0 200 38" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+
+    <!-- NEW: EMERGENCY FLOAT BUTTON -->
+    <button class="emergency-float-btn" onclick="toggleEmergency()" title="Emergency Mode">
+      🚨<span class="em-label">SOS</span>
+    </button>
+
+    <!-- NEW: EMERGENCY OVERLAY -->
+    <div class="emergency-overlay" id="emergencyOverlay">
+      <div class="emergency-header">
+        <div class="emergency-title">
+          <div class="emergency-pulse"></div>
+          🚨 Emergency Mode — Active
+        </div>
+        <button class="emergency-close" onclick="toggleEmergency()">✕ Close</button>
+      </div>
+      <div class="safe-route-bar">
+        <strong>✓ Safest path from your location:</strong> Head to <strong>Gate D</strong> via south concourse. Estimated <strong>2 min</strong> walk. 
+        Crowd state: <strong style="color:var(--green)">Clear</strong>
+      </div>
+      <div class="emergency-section-title">🚪 Nearest Exits</div>
+      <div id="exitList"></div>
+      <div class="emergency-section-title">⚠️ Active Incidents</div>
+      <div id="incidentList"></div>
+    </div>
+
+    <!-- HEATMAP TOOLTIP -->
+    <div class="heatmap-tooltip" id="heatmapTooltip"></div>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div class="screen" id="admin-panel">
+  <div class="admin-topbar">
+    <div class="admin-logo">Smart<span>Stadium</span> <span style="color:var(--text3);font-size:.7rem;font-weight:400;margin-left:.25rem">Admin</span></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="adminTab('dashboard')">Dashboard</button>
+      <button class="admin-tab" onclick="adminTab('alerts')">Alerts <span id="alertCount" style="background:var(--red);color:#fff;border-radius:10px;padding:0 5px;font-size:.65rem;margin-left:3px">3</span></button>
+      <button class="admin-tab" onclick="adminTab('staff')">Staff Mgmt</button>
+      <!-- NEW: Analytics tab -->
+      <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
+    </div>
+    <button class="admin-logout" onclick="goTo('landing')">Logout →</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-left">
+      <!-- DASHBOARD TAB (ORIGINAL) -->
+      <div class="admin-tab-content active" id="atab-dashboard">
+        <div style="font-family:var(--font-head);font-size:.9rem;font-weight:600;margin-bottom:.75rem">Welcome, <span style="color:var(--accent)">Admin Demo</span></div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Crowd</div>
+            <div class="stat-value" id="adminTotalCrowd">87,400</div>
+            <div class="stat-sub" id="adminCrowdSub">of 132,000 capacity</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Alerts</div>
+            <div class="stat-value" id="adminAlertCount" style="color:var(--red)">3</div>
+            <div class="stat-sub">needs attention</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Staff on Duty</div>
+            <div class="stat-value" style="color:var(--accent)">48</div>
+            <div class="stat-sub">12 dispatched</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Food Orders</div>
+            <div class="stat-value">1,847</div>
+            <div class="stat-sub">last 30 min</div>
+          </div>
+        </div>
+        <!-- NEW: Extended Analytics Stats -->
+        <div class="admin-ext-stats">
+          <div style="font-family:var(--font-head);font-size:.78rem;font-weight:600;margin-bottom:.4rem;color:var(--text2)">Extended Analytics</div>
+          <div class="admin-ext-row"><span class="admin-ext-label">Most Crowded Zone</span><span class="admin-ext-val hot" id="mostCrowdedZone">Gate A — 94%</span></div>
+          <div class="admin-ext-row"><span class="admin-ext-label">Avg Wait Time</span><span class="admin-ext-val" id="avgWaitTime">11 min</span></div>
+          <div class="admin-ext-row"><span class="admin-ext-label">Crowd Velocity</span><span class="admin-ext-val">↑ Rising</span></div>
+          <div class="admin-ext-row"><span class="admin-ext-label">Stadium Capacity</span>
+            <span style="display:flex;align-items:center;gap:.5rem;flex:1;justify-content:flex-end">
+              <span class="admin-ext-val" id="capacityPct">66%</span>
+              <div class="capacity-track" style="width:80px"><div class="capacity-fill" id="capacityBar" style="width:66%;background:var(--accent)"></div></div>
+            </span>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="card-title mb-sm">Zone Breakdown</div>
+          <div id="adminZones"></div>
+        </div>
+        <button class="btn-primary" style="width:100%;margin-bottom:.5rem" onclick="adminTriggerSurge()">⚡ Trigger Crowd Surge</button>
+        <button class="dispatch-btn" onclick="dispatchAllStaff()">🚨 Dispatch All Staff</button>
+      </div>
+
+      <!-- ALERTS TAB (ORIGINAL) -->
+      <div class="admin-tab-content" id="atab-alerts">
+        <div class="info-card">
+          <div class="card-title mb-sm">Active Alerts</div>
+          <div id="adminAlerts"></div>
+        </div>
+        <div class="info-card" style="margin-top:.75rem">
+          <div class="card-title mb-sm">Alert History</div>
+          <div style="font-size:.78rem;color:var(--text2);line-height:1.7">
+            15:22 — Gate A overflow cleared<br>
+            15:08 — Food Court 2 restocked<br>
+            14:55 — Gate B opened additional lane<br>
+            14:40 — Surge simulation ran (test)<br>
+            14:12 — Medical team dispatched (Sec 103)
+          </div>
+        </div>
+      </div>
+
+      <!-- STAFF TAB (ORIGINAL) -->
+      <div class="admin-tab-content" id="atab-staff">
+        <div class="info-card">
+          <div class="card-title mb-sm">Staff Roster</div>
+          <div id="staffList"></div>
+        </div>
+        <div class="info-card" style="margin-top:.75rem">
+          <div class="card-title mb-sm">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem">
+            <button class="btn-primary" style="width:100%;padding:8px" onclick="broadcastMsg()">📢 Broadcast Announcement</button>
+            <button class="btn-secondary" style="width:100%;padding:8px;border-radius:10px;font-size:.82rem" onclick="openExtraGate()">🚪 Open Extra Gate Lane</button>
+            <button class="btn-secondary" style="width:100%;padding:8px;border-radius:10px;font-size:.82rem" onclick="sendMedical()">🚑 Send Medical Team</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW: ANALYTICS TAB -->
+      <div class="admin-tab-content" id="atab-analytics">
+        <div style="font-family:var(--font-head);font-size:.85rem;font-weight:600;margin-bottom:.75rem;color:var(--text1)">📊 Advanced Analytics</div>
+        <!-- What-If Simulation Panel -->
+        <div class="whatif-panel">
+          <div class="whatif-title">🔮 What-If Simulation</div>
+          <div style="font-size:.72rem;color:var(--text3);margin-bottom:.5rem">Toggle scenarios to see simulated impact on heatmap & crowd flow</div>
+          <label class="whatif-option">
+            <input type="checkbox" id="wiGateC" onchange="runWhatIf()"> Close Gate C
+          </label>
+          <label class="whatif-option">
+            <input type="checkbox" id="wiGateA" onchange="runWhatIf()"> Restrict Gate A to 50%
+          </label>
+          <label class="whatif-option">
+            <input type="checkbox" id="wiFC2" onchange="runWhatIf()"> Close Food Court 2
+          </label>
+          <label class="whatif-option">
+            <input type="checkbox" id="wiExtra" onchange="runWhatIf()"> Open Emergency Gate E
+          </label>
+          <div class="whatif-effect" id="whatifEffect"></div>
+        </div>
+        <!-- Crowd trend chart mock -->
+        <div class="info-card">
+          <div class="card-title mb-sm">Crowd Trend (Last 2 Hours)</div>
+          <svg viewBox="0 0 280 80" width="100%" height="80" style="display:block">
+            <defs>
+              <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0099ff" stop-opacity=".3"/>
+                <stop offset="100%" stop-color="#0099ff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,65 L35,58 L70,50 L105,42 L140,30 L175,22 L210,18 L245,15 L280,12 L280,80 L0,80 Z" fill="url(#trendGrad)"/>
+            <path d="M0,65 L35,58 L70,50 L105,42 L140,30 L175,22 L210,18 L245,15 L280,12" fill="none" stroke="var(--accent)" stroke-width="2"/>
+            <text x="2" y="78" fill="var(--text3)" font-size="8" font-family="DM Sans">18:00</text>
+            <text x="70" y="78" fill="var(--text3)" font-size="8" font-family="DM Sans">18:30</text>
+            <text x="140" y="78" fill="var(--text3)" font-size="8" font-family="DM Sans">19:00</text>
+            <text x="210" y="78" fill="var(--text3)" font-size="8" font-family="DM Sans">19:30</text>
+            <text x="255" y="78" fill="var(--text3)" font-size="8" font-family="DM Sans">Now</text>
+          </svg>
+        </div>
+        <div class="info-card">
+          <div class="card-title mb-sm">Gate-wise Entry Volume</div>
+          <div id="gateVolumeChart"></div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-right">
+      <div class="admin-map-label">LIVE STADIUM MAP — NARENDRA MODI STADIUM</div>
+      <svg id="admin-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
+        <defs>
+          <radialGradient id="fieldGrad2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1a4a2e"/><stop offset="100%" stop-color="#0d2e1a"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="400" cy="300" rx="350" ry="260" fill="#0d1520" stroke="#1e3a5f" stroke-width="2"/>
+        <ellipse cx="400" cy="300" rx="310" ry="225" fill="#0f1d30" stroke="#1e3a5f" stroke-width="1"/>
+        <ellipse cx="400" cy="300" rx="245" ry="175" fill="#0f1d2e" stroke="#1e3a5f" stroke-width="1"/>
+        <ellipse cx="400" cy="300" rx="190" ry="135" fill="url(#fieldGrad2)"/>
+        <ellipse cx="400" cy="300" rx="170" ry="120" fill="none" stroke="#1e5c30" stroke-width="1" opacity=".6"/>
+        <line x1="400" y1="165" x2="400" y2="435" stroke="#1e5c30" stroke-width="1" opacity=".6"/>
+        <!-- NEW: Admin heatmap layer -->
+        <g id="adminHeatmap" opacity="0.6"></g>
+        <text x="85" y="290" text-anchor="middle" fill="#4a6580" font-size="9" font-family="Space Grotesk">Gate A</text>
+        <text x="400" y="69" text-anchor="middle" fill="#4a6580" font-size="9" font-family="Space Grotesk">Gate B</text>
+        <text x="705" y="290" text-anchor="middle" fill="#4a6580" font-size="9" font-family="Space Grotesk">Gate C</text>
+        <text x="400" y="549" text-anchor="middle" fill="#4a6580" font-size="9" font-family="Space Grotesk">Gate D</text>
+        <g id="adminDots"></g>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+</div>
+
+<script src="script_enhanced.js"></script>
+</body>
+</html>
